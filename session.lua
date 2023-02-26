@@ -26,13 +26,24 @@ local session_mt = {
 ---@param res table
 ---@param go function
 return function (req, res, go)
-    -- TODO: Cookies should get parsed by a separate middleware
+    -- TODO: Cookies should probably get parsed by a separate middleware
     local cookie_header = req.headers["cookie"] or ""
-    local session_token = cookie_header:match("sid=(%w+)")
+    local session_token = nil
+    
+    -- Sometimes we can have multiple session cookies. (i.e if the server reloads.)
+    -- Only one sid is valid, so get the first valid one if it exists.
+    for sid in cookie_header:gmatch("sid=(%w+)") do
+        if session_token[sid] then
+            session_token = sid
+            break
+        end
+    end
 
-    if not session_token or not sessions[session_token] then
+    -- There was no session token cookie or it wasn't valid, create a new one.
+    if not session_token then
         session_token = generateRandomSessionId()
-        res.headers["Set-Cookie"] = "sid=" .. session_token .. ";"
+        -- TODO: Make max-age configurable
+        res.headers["Set-Cookie"] = "sid=" .. session_token .. "; Max-Age: 1000; Same-Site=Strict;"
         sessions[session_token] = {}
     end
 
