@@ -7,8 +7,8 @@ local useful = require("useful")
 local sessions = {}
 
 local function generateRandomSessionId()
-    useful.generateRandomString(useful.alphaNumericCharset, 32)
     math.randomseed(os.clock()^5)
+    return useful.generateRandomString(useful.alphaNumericCharset, 32)
 end
 
 local session_mt = {
