@@ -19,14 +19,17 @@ local DISCORD_CLIENT_SECRET = os.getenv("DISCORD_CLIENT_SECRET") or error("DISCO
 local BASE_URL = os.getenv("LUA_BASE_URL") or "localhost"
 
 local html = require("html")
-local useful = require("useful")
+local querystring = require("querystring")
 
 local function generateDiscordAuthorizationUrl (scopes, state, redirect_uri)
-  return "https://discord.com/oauth2/authorize?response_type=code"
-    .. "&client_id=" .. useful.urlEncode(DISCORD_CLIENT_ID)
-    .. "&scopes=" .. useful.urlEncode(table.concat(scopes, "%20"))
-    .. "&state=" .. useful.urlEncode(state)
-    .. "&redirect_uri=" .. useful.urlEncode(redirect_uri)
+  return "https://discord.com/oauth2/authorize?" .. querystring.stringify({
+    response_type = "code",
+    client_id = DISCORD_CLIENT_ID,
+    scopes = scopes,
+    state = state,
+    redirect_uri = redirect_uri,
+    prompt = "consent"
+  })
 end
 
 require("weblit-app")
@@ -59,8 +62,8 @@ require("weblit-app")
           ]]}
         },
         html.body {
-          html.div {
-            html.a {
+          html.a {
+            html.div {
               attributes = {
                 id = "discord-sign-in"
               },
