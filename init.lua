@@ -39,6 +39,7 @@ require("weblit-app")
     })
     .use(require("weblit-logger"))
     .use(require("weblit-auto-headers"))
+    .use(require("session"))
     .route({method="GET", path="/"}, function (req, res, go)
       local template = html.html {
         html.head {
