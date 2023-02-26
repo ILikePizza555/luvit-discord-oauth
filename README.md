@@ -1,0 +1,3 @@
+Proof-of-concept application that enabled authentation with Discord using Discord's ouath api and the [weblit](https://github.com/creationix/weblit) library.
+
+In order to run this you will need to create a new application on [Discord Developer Portal](https://discord.com/developers/applications) and get the `client id` and `client secret`. Then, set those values to the `DISCORD_CLIENT_ID` and `DISCORD_CLIENT_SECRET` environment variables respectively. Finally, you can call `luvit init.lua`.
