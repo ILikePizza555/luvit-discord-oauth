@@ -28,9 +28,9 @@ local session_mt = {
 return function (req, res, go)
     -- TODO: Cookies should get parsed by a separate middleware
     local cookie_header = req.headers["cookie"] or ""
-    local session_token = cookie_header:match("sid=(%w+);")
+    local session_token = cookie_header:match("sid=(%w+)")
 
-    if not session_token then
+    if not session_token or not sessions[session_token] then
         session_token = generateRandomSessionId()
         res.headers["Set-Cookie"] = "sid=" .. session_token .. ";"
         sessions[session_token] = {}
