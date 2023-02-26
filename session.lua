@@ -35,7 +35,7 @@ return function (req, res, go)
     -- Sometimes we can have multiple session cookies. (i.e if the server reloads.)
     -- Only one sid is valid, so get the first valid one if it exists.
     for sid in cookie_header:gmatch("sid=(%w+)") do
-        if session_token[sid] then
+        if sessions[sid] then
             session_token = sid
             break
         end
