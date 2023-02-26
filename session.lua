@@ -11,6 +11,8 @@ local function generateRandomSessionId()
     return useful.generateRandomString(useful.alphaNumericCharset, 32)
 end
 
+-- Metatable for the session table that gets added to the `req` table
+-- Uses the session_token value to access the module-level sessions table
 local session_mt = {
     __index = function (table, key)
         return sessions[table.session_token][key]
