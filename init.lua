@@ -1,5 +1,5 @@
   --[[lit-meta
-    name = "luvit-discord"
+    name = "luvit-discord-oauth"
     version = "0.0.1"
     dependencies = {
       "creationix/weblit",
