@@ -24,6 +24,7 @@ local html = require("html")
 local querystring = require("querystring")
 local useful = require("useful")
 local coro_request = require("coro-http").request
+local json = require("json")
 
 local function generateDiscordAuthorizationUrl (scopes, state, redirect_uri)
   return "https://discord.com/api/oauth2/authorize?" .. querystring.stringify({
@@ -55,7 +56,9 @@ local function requestDiscordAccessToken (code)
     {"Content-Length", #payload}
   }
 
-  return coro_request("POST", discord_token_endpoint, headers, payload)
+  local res, body = coro_request("POST", discord_token_endpoint, headers, payload)
+  local parsed_body = json.parse(body)
+  return res, parsed_body
 end
 
 require("weblit-app")
@@ -69,6 +72,8 @@ require("weblit-app")
     .route({method="GET", path="/callback/discord_auth"}, function (req, res, go)
       local code = req.query.code
       local state = req.query.state
+
+      res.headers["Content-Type"] = "text/html"
 
       if state ~= req.session.state then
         res.code = 401
@@ -84,7 +89,7 @@ require("weblit-app")
       end
 
       res.code = 200
-      res.body = "<h1>Success!</h1><code>" .. accessTokenBody .. "</code>"
+      res.body = "<h1>Success!</h1><code>" .. json.stringify(accessTokenBody) .. "</code>"
     end)
     .route({method="GET", path="/"}, function (req, res, go)
       req.session.state = useful.generateRandomString(useful.alphaNumericCharset, 8)
